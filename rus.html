@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Random Counter</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Podkova';
+            src: url('Podkova-Regular.ttf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body, html {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: url('fon.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .title {
+            font-family: 'Dzimaa', sans-serif;
+            font-size: 4em;
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .square {
+            position: relative; /* Для абсолютного позиционирования элементов внутри */
+            background-image: url('board.png');
+            background-size: cover;
+            background-position: center; /* Центрируем фоновое изображение */
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center; /* Выравнивание текста по левому краю */
+            color: white;
+            width: 1000px;
+            height: 600px;
+            padding-right: 50px;
+        }
+
+        .square p {
+            font-weight: bold;
+            color: gold;
+            font-size: 2.5vw;
+            margin: 10px 0;
+        }
+
+        .form-control {
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+
+        .btn {
+            margin: 0 30px;
+            font-size: 1em;
+        }
+
+
+        #sub-jet {
+            position: absolute;
+            top: 90px;
+            left: -96px;
+            width: 150px;
+            height: 150px;
+            background: url('2.gif') no-repeat;
+            background-size: contain;
+            z-index: 10;
+        }
+
+        @keyframes moveBackAndForth {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            30% {
+                transform: translate(100px, 100px);
+            }
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0px);
+                text-shadow: 0 1px 0 #ccc, 0 2px 0 #ccc, 0 3px 0 #ccc, 0 4px 0 #ccc,
+                0 5px 0 #ccc, 0 6px 0 transparent, 0 7px 0 transparent, 0 8px 0 transparent,
+                0 9px 0 transparent, 0 10px 10px rgba(0, 0, 0, 0.4);
+            }
+            100% {
+                transform: translateY(-20px);
+                text-shadow: 0 1px 0 #ccc, 0 2px 0 #ccc, 0 3px 0 #ccc, 0 4px 0 #ccc,
+                0 5px 0 #ccc, 0 6px 0 transparent, 0 7px 0 transparent, 0 8px 0 transparent,
+                0 9px 0 transparent, 0 50px 25px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .container.text-center {
+            font-family: 'Podkova', sans-serif;
+        }
+
+        .btn {
+            border-radius: 30px;
+            font-size: 2em;
+        }
+
+        .modal-dialog {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #dee2e6; /* Серый цвет границы */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d; /* Серый цвет для кнопки Отмена */
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268; /* Темнее при наведении */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Цвет для кнопки Применить */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Темнее при наведении */
+        }
+
+        /* Убираем стрелочки у поля ввода */
+        #depositInput {
+            -moz-appearance: textfield; /* Firefox */
+            -webkit-appearance: none; /* Safari и Chrome */
+            appearance: none; /* Стандартное свойство */
+        }
+
+        /* Сообщение об ошибке */
+        .invalid-feedback {
+            display: none;
+            color: red;
+            font-size: 0.875em;
+        }
+
+        .is-invalid + .invalid-feedback {
+            display: block;
+        }
+
+        /* Медиазапросы для уменьшения размеров изображения */
+        @media (max-width: 1200px) {
+            #jet {
+                width: 140px;
+                height: 140px;
+            }
+            #sub-jet {
+                width: 130px;
+                height: 130px;
+                left: -86px;
+            }
+            .square {
+                width: 800px; /* Уменьшение размера для средних экранов */
+                height: 480px; /* Пропорциональное уменьшение высоты */
+            }
+            .square p {
+                font-size: 2.5vw;
+            }
+        }
+
+        @media (max-width: 992px) {
+            #jet {
+                width: 120px;
+                height: 120px;
+            }
+            #sub-jet {
+                width: 110px;
+                height: 110px;
+                left: -76px;
+            }
+            .square {
+                width: 600px; /* Уменьшение размера для меньших экранов */
+                height: 360px; /* Пропорциональное уменьшение высоты */
+            }
+
+        }
+
+        @media (max-width: 768px) {
+            #jet {
+                width: 100px;
+                height: 100px;
+            }
+            #sub-jet {
+                width: 90px;
+                height: 90px;
+                left: -66px;
+            }
+            .square {
+                width: 600px; /* Уменьшение размера для меньших экранов */
+                height: 360px; /* Пропорциональное уменьшение высоты */
+            }
+        }
+
+        @media (max-width: 576px) {
+            #jet {
+                width: 80px;
+                height: 80px;
+            }
+            #sub-jet {
+                width: 70px;
+                height: 70px;
+                left: -56px;
+            }
+            .square {
+                width: 600px; /* Уменьшение размера для меньших экранов */
+                height: 360px; /* Пропорциональное уменьшение высоты */
+            }
+            .square p {
+                font-size: 3.5vw;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="jet">
+    <div id="sub-jet"></div>
+</div>
+<div class="container text-center">
+    <div class="square-and-button">
+        <div class="square">
+            <p>Ставка: <span id="stake">0.00</span>₽</p>
+            <p>Автоматические спины: <span id="spins">10</span></p>
+            <p>Ваш баланс: <span id="balance">0.00</span>₽</p>
+        </div>
+        <button class="btn btn-primary" onclick="showDepositModal()">Ввести депозит</button>
+        <button class="btn btn-success" onclick="signalEntered()" style="display: none;" id="enteredBtn">Сигнал зашёл</button>
+        <button class="btn btn-danger" onclick="signalNotEntered()" style="display: none;" id="notEnteredBtn">Сигнал не зашёл</button>
+    </div>
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="depositModal" tabindex="-1" role="dialog" aria-labelledby="depositModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="depositModalLabel">Введите депозит</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="depositInput" placeholder="Введите сумму" autofocus>
+                <div class="invalid-feedback">Пожалуйста, введите действительное число.</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" onclick="submitDeposit()">Применить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deposit = 0;
+    let stake = 0;
+    let spins = 10;
+    let balance = 0;
+
+    function showDepositModal() {
+        $('#depositModal').modal('show');
+    }
+
+    function submitDeposit() {
+        const depositInput = document.getElementById('depositInput');
+        const depositValue = parseFloat(depositInput.value);
+
+        if (isNaN(depositValue) || depositValue <= 0) {
+            depositInput.classList.add('is-invalid'); // Показываем сообщение об ошибке
+            return;
+        }
+
+        depositInput.classList.remove('is-invalid'); // Убираем сообщение об ошибке
+        deposit = depositValue;
+        stake = deposit * 0.13;
+        balance = deposit;
+        updateDisplay();
+        $('#depositModal').modal('hide');
+        document.getElementById('enteredBtn').style.display = 'inline-block';
+        document.getElementById('notEnteredBtn').style.display = 'inline-block';
+    }
+
+
+    function updateDisplay() {
+        document.getElementById('stake').textContent = stake.toFixed(2);
+        document.getElementById('spins').textContent = spins;
+        document.getElementById('balance').textContent = balance.toFixed(2);
+    }
+
+    function signalNotEntered() {
+        stake *= 1.3;
+        spins = 25;
+        updateDisplay();
+        showDepositModal();
+    }
+
+    function signalEntered() {
+        stake /= 1.33;
+        updateDisplay();
+        showDepositModal();
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
